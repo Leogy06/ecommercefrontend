@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ModeToggle } from "./toggle-theme";
+import { Button } from "./ui/button";
+import { useRouterTransition } from "@/context/RouterTransitionContext";
 
-const Header = () => {
+export default function Header() {
   return (
     //behavior
     <header className="sticky top-0 z-50 bg-accent border-b border-gray-200 shadow-sm">
@@ -30,6 +32,24 @@ const Header = () => {
       </div>
     </header>
   );
-};
+}
 
-export default Header;
+const pages = [
+  { name: "Home", path: "/" },
+  { name: "Menu", path: "/menu" },
+  { name: "Orders", path: "/order" },
+  { name: "Profile", path: "/profile" },
+];
+
+function PagesLgWidth() {
+  const { push } = useRouterTransition();
+  return (
+    <div className="flex items-center gap-4">
+      {pages.map((p) => (
+        <Button key={p.name} variant={"link"} onClick={() => push(p.path)}>
+          {p.name}
+        </Button>
+      ))}
+    </div>
+  );
+}
