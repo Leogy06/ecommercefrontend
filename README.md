@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Foodie E-Commerce Platform
 
-## Getting Started
+A modern food ordering platform built with Next.js, MongoDB, and ASP.NET Core Web API, featuring a beautiful landing page, smooth ordering flow, and admin dashboard for menu management.
 
-First, run the development server:
+This project is designed to be portfolio-worthy, showcasing full-stack skills, responsive design, and real-world e-commerce features.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Features
+User-Facing
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Attractive landing page with hero sections, featured dishes, and promotions.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Browse menu and customize orders.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Add items to cart and complete checkout.
 
-## Learn More
+Track order status in real time.
 
-To learn more about Next.js, take a look at the following resources:
+Rate and review menu items.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Loyalty/rewards points system.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Responsive design (desktop, tablet, mobile).
 
-## Deploy on Vercel
+Optional dark mode toggle.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Admin Dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Add, edit, and remove menu items.
+
+Manage incoming orders.
+
+View basic analytics (total sales, popular items).
+
+Activate promotions or discount codes.
+
+Technical Highlights
+
+Frontend: Next.js, Tailwind CSS, React hooks, framer-motion for subtle animations.
+
+Backend: ASP.NET Core Web API with REST endpoints.
+
+Database: MongoDB for scalable document-based storage.
+
+Authentication: JWT-based authentication with role management (admin/customer).
+
+Portfolio-Ready Features: Ratings/reviews, promotions, loyalty points, responsive layout, and smooth interactions.
+
+Database Schema
+
+The application uses MongoDB collections:
+
+users – Stores customers and admin users with role-based access.
+
+menu_items – List of dishes with name, description, price, availability.
+
+orders – Customer orders with order status and total amount.
+
+order_items – Items in each order with quantity and price.
+
+reviews – Customer ratings and comments for dishes.
+
+promotions – Discount codes and special offers.
+
+loyalty_points – Tracks points earned by customers.
+
+(See ER diagram in /docs folder for visual reference)
+
+Installation & Setup
+Prerequisites
+
+Node.js >= 18
+
+.NET 10 SDK
+
+MongoDB (local or Atlas)
