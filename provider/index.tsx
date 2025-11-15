@@ -1,5 +1,3 @@
-"use client";
-
 import Header from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { RouterTransitionProvider } from "@/context/RouterTransitionContext";

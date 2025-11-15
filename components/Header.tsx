@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ModeToggle } from "./toggle-theme";
 import { Button } from "./ui/button";
 import { useRouterTransition } from "@/context/RouterTransitionContext";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   return (
@@ -26,7 +27,7 @@ export default function Header() {
               className="object-contain"
             />
           </motion.div>
-
+          <PagesLgWidth />
           <ModeToggle />
         </div>
       </div>
@@ -43,13 +44,30 @@ const pages = [
 
 function PagesLgWidth() {
   const { push } = useRouterTransition();
+  const pathName = usePathname();
   return (
-    <div className="flex items-center gap-4">
-      {pages.map((p) => (
-        <Button key={p.name} variant={"link"} onClick={() => push(p.path)}>
-          {p.name}
-        </Button>
-      ))}
+    <div className="hidden lg:flex items-center gap-4 relative">
+      {pages.map((p) => {
+        const isActive = pathName === p.path;
+        return (
+          <Button
+            size={"lg"}
+            key={p.name}
+            variant={"link"}
+            onClick={() => push(p.path)}
+            className="relative"
+          >
+            {p.name}
+            {isActive && (
+              <motion.div
+                layoutId="nav-underline"
+                className=" absolute left-0 right-0 bottom-0 h-px bg-primary"
+                transition={{ type: "spring", stiffness: 300, damping: 24 }}
+              />
+            )}
+          </Button>
+        );
+      })}
     </div>
   );
 }
