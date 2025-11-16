@@ -10,7 +10,13 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   return (
     //behavior
-    <header className="sticky top-0 z-50 bg-accent border-b border-gray-200 shadow-sm">
+    <motion.header
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
+      viewport={{ once: true }}
+      className="sticky top-0 z-50 bg-accent border-b border-border shadow-sm"
+    >
       {/* padding margin */}
       <div className=" mx-auto px-4 sm:px-6 lg-px-8">
         {/* element position */}
@@ -34,7 +40,7 @@ export default function Header() {
           <ModeToggle />
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }
 
@@ -59,6 +65,7 @@ function PagesLgWidth() {
             variant={"link"}
             onClick={() => push(p.path)}
             className="relative"
+            disabled={isActive}
           >
             {p.name}
             {isActive && (
