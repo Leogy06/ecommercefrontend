@@ -97,7 +97,7 @@ export default function Header() {
       </AnimatePresence>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-accent border-b border-border shadow-sm">
+      <header className="sticky top-0 z-50 bg-accent/50 border-b border-border shadow-sm backdrop-blur-3xl">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Image
