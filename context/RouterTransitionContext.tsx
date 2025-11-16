@@ -1,5 +1,6 @@
 "use client";
 
+import OverlayHeading from "@/components/OverlayHeading";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useTransition } from "react";
 
@@ -52,6 +53,7 @@ export const RouterTransitionProvider = ({
         replace,
       }}
     >
+      {isPending && <OverlayHeading />}
       {children}
     </RouterTransitionContext.Provider>
   );

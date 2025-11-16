@@ -49,7 +49,7 @@ function PagesLgWidth() {
   const { push } = useRouterTransition();
   const pathName = usePathname();
   return (
-    <div className="hidden lg:flex items-center gap-4 relative">
+    <div className="hidden lg:flex items-center gap-4">
       {pages.map((p) => {
         const isActive = pathName === p.path;
         return (
