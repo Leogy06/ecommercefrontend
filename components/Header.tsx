@@ -23,8 +23,11 @@ export default function Header() {
             <Image
               src="/images/logo.png"
               alt="logo-foodie"
-              fill
-              className="object-contain"
+              width={400}
+              height={400}
+              priority={false} //lazy load
+              placeholder="blur"
+              blurDataURL="/images/blur_logo.png"
             />
           </motion.div>
           <PagesLgWidth />
