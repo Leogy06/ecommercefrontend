@@ -5,69 +5,16 @@ import { useRouterTransition } from "@/context/RouterTransitionContext";
 import { ArrowRight, Clock, Heart, Shield, Star, Users } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-
-interface FeaturedDishesProp {
-  id: number;
-  name: string;
-  rating: number;
-  sold: number;
-  price: number;
-  description: string;
-  img: string;
-}
+import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
+import { MenuItem } from "@/types";
 
 export default function Landing() {
   const { push } = useRouterTransition();
 
-  const [featuredDishes, setFeaturedDishes] = useState([
-    {
-      id: 1,
-      name: "Classic Burger",
-      rating: 4.5,
-      sold: 100,
-      price: 50,
-      description: "Juicy beef patty with fresh lettuce and tomato.",
-      img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=999&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 2,
-      name: "Margherita Pizza",
-      rating: 4.7,
-      sold: 150,
-      price: 198,
-      description: "Fresh mozzarella, basil, and tomato sauce on a thin crust.",
-      img: "https://media.istockphoto.com/id/1907940102/photo/margarita-pizza.jpg?s=1024x1024&w=is&k=20&c=lXoERJRr_HPQ2fRXSW9qWgVg1gU1bYK6qnLR4KAGK0w=",
-    },
-    {
-      id: 3,
-      name: "Caesar Salad",
-      rating: 4.3,
-      sold: 80,
-      price: 84,
-      description: "Crisp romaine lettuce with Caesar dressing and croutons.",
-      img: "https://images.unsplash.com/photo-1656002609059-29bd82325682?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 4,
-      name: "Spaghetti Carbonara",
-      rating: 4.6,
-      sold: 90,
-      price: 88,
-      description: "Creamy pasta with pancetta, egg, and Parmesan cheese.",
-      img: "https://images.unsplash.com/photo-1679584410403-d03357e2e219?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 5,
-      name: "Grilled Salmon",
-      rating: 4.8,
-      sold: 60,
-      price: 170,
-      description: "Tender salmon fillet with lemon butter sauce.",
-      img: "https://cdn.pixabay.com/photo/2014/01/09/15/31/pasta-241146_960_720.jpg",
-    },
-  ]);
+  const { data: featuredDishes, isLoading: isFeaturedDishLoading } =
+    useGetMenuItemsQuery();
 
   return (
     <main className="snap-y snap-mandatory h-screen overflow-y-scroll scroll-smooth">
@@ -77,7 +24,10 @@ export default function Landing() {
           <HeroSection push={push} />
           {/* Section 2 – Featured Dishes */}
           <section className="snap-start ">
-            <FeaturedDishes featuredDishes={featuredDishes} />
+            <FeaturedDishes
+              isLoading={isFeaturedDishLoading}
+              featuredDishes={featuredDishes || []}
+            />
           </section>
         </div>
       </div>
@@ -198,12 +148,16 @@ function HeroSection({ push }: { push: (path: string) => void }) {
 
 function FeaturedDishes({
   featuredDishes,
+  isLoading,
 }: {
-  featuredDishes: FeaturedDishesProp[];
+  featuredDishes: MenuItem[];
+  isLoading: boolean;
 }) {
+  if (isLoading) return <FeaturedDishesSkeleton />;
+  if (!featuredDishes) return null;
   return (
     <section
-      className="snap-start h-screen pt-4"
+      className="snap-start py-6 md:py-8 lg:py-10"
       aria-labelledby="featured-dishes"
     >
       <div className="flex flex-col text-center">
@@ -248,7 +202,7 @@ function FeaturedDishes({
                 </span>
 
                 <Image
-                  src={`${f.img}`}
+                  src={f.images?.[0] ?? "/images/logo.png"}
                   height={224}
                   width={500}
                   alt={f.name}
@@ -268,7 +222,7 @@ function FeaturedDishes({
                   </span>
 
                   <span className="text-sm text-muted-foreground">
-                    Sold {f.sold}
+                    Sold {f.ratingCount}
                   </span>
                 </div>
 
@@ -279,6 +233,47 @@ function FeaturedDishes({
                 <Button className="w-full rounded-xl mt-3">Add to Cart</Button>
               </div>
             </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedDishesSkeleton() {
+  return (
+    <section className="snap-start py-6 md:py-8 lg:py-10">
+      <div className="flex flex-col text-center">
+        <h1 className="text-2xl font-bold text-foreground-900 leading-tight">
+          Featured Dishes
+        </h1>
+        <p className="text-muted-foreground tracking-tight">
+          Discover our best seller dishes and taste the luxury.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-4 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="bg-accent rounded-2xl shadow-md overflow-hidden p-0 animate-pulse"
+            >
+              {/* Image skeleton */}
+              <div className="w-full h-56 bg-muted"></div>
+
+              {/* Content skeleton */}
+              <div className="p-5 space-y-3">
+                <div className="h-5 w-32 bg-muted rounded"></div>
+
+                <div className="flex items-center justify-between">
+                  <div className="h-4 w-20 bg-muted rounded"></div>
+                  <div className="h-4 w-16 bg-muted rounded"></div>
+                </div>
+
+                <div className="h-4 w-full bg-muted rounded"></div>
+                <div className="h-4 w-3/4 bg-muted rounded"></div>
+                <div className="h-10 w-full bg-muted rounded-xl mt-3"></div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
