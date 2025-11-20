@@ -70,9 +70,13 @@ export default function Landing() {
   ]);
 
   return (
-    <main className="flex flex-col gap-4 p-2 sm:p-4 md:p-6 lg:p-8">
+    <main className=" flex flex-col gap-4 p-2 sm:p-4 md:p-6 lg:p-8 snap-y snap-mandatory h-screen overflow-y-scroll scroll-smooth">
+      {/* Section 1 – Hero */}
       <HeroSection push={push} />
-      <FeaturedDishes featuredDishes={featuredDishes} />
+      {/* Section 2 – Featured Dishes */}
+      <section className="snap-start ">
+        <FeaturedDishes featuredDishes={featuredDishes} />
+      </section>
     </main>
   );
 }
@@ -80,106 +84,108 @@ export default function Landing() {
 function HeroSection({ push }: { push: (path: string) => void }) {
   return (
     <section
-      className="min-h-screen py-16 sm:py-20 bg-linear-to-b from-red-100/40 to-transparent dark:from-red-500/20"
+      className="h-screen snap-start pt-4"
       aria-labelledby="hero-heading"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
-          {/* TEXT */}
-          <motion.div
-            initial={{ x: -40, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="flex flex-col max-w-xl text-center lg:text-left"
-          >
-            <h1
-              id="hero-heading"
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground-900 leading-tight mb-4"
+      <div className="bg-linear-to-b rounded-xl from-red-100/40 to-transparent dark:from-red-500/20 ">
+        <div className="container mx-auto p-2 sm:p-4 md:p-6 lg:p-8">
+          <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-20">
+            {/* TEXT */}
+            <motion.div
+              initial={{ x: -40, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="flex flex-col max-w-xl text-center lg:text-left"
             >
-              Taste the Best Cuisines, Freshly Delivered
-            </h1>
-            <p className="text-base sm:text-lg text-muted-foreground mb-8">
-              Experience mouth-watering dishes crafted with fresh ingredients by
-              veteran cooks — delivered to your doorstep faster than ever.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-              <Button
-                onClick={() => push("/menu")}
-                size="lg"
-                className="text-lg"
+              <h1
+                id="hero-heading"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground-900 leading-tight mb-4"
               >
-                Order Now <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                onClick={() => push("/menu")}
-                size="lg"
-                variant="outline"
-                className="text-lg"
-              >
-                View Menu
-              </Button>
-            </div>
-          </motion.div>
-          {/* IMAGE */}
-          <motion.div
-            initial={{ x: 40, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="flex justify-center lg:justify-end w-full"
-          >
-            <Image
-              src="/images/resto.png"
-              alt="Restaurant freshly cooked dishes"
-              width={600}
-              height={400}
-              placeholder="blur"
-              blurDataURL="/images/blur_resto.png"
-              className="rounded-2xl shadow-xl object-cover max-w-full h-auto"
-              loading="lazy"
-            />
-          </motion.div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 px-6 py-3 gap-4 mt-8">
-          <motion.div
-            initial={{ x: -40, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="flex flex-col items-center"
-          >
-            <Users />
-            <h3>50k+</h3>
-            <p className=" text-muted-foreground ">Happy Customers</p>
-          </motion.div>
-          <motion.div
-            initial={{ x: -40, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="flex flex-col items-center"
-          >
-            <Star />
-            <h3>4.8</h3>
-            <p className=" text-muted-foreground ">Average Rating</p>
-          </motion.div>
-          <motion.div
-            initial={{ x: 40, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="flex flex-col items-center"
-          >
-            <Clock />
-            <h3>30min</h3>
-            <p className=" text-muted-foreground ">Delivery Time</p>
-          </motion.div>
-          <motion.div
-            initial={{ x: 40, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="flex flex-col items-center"
-          >
-            <Shield />
-            <h3>100%</h3>
-            <p className=" text-muted-foreground ">Quality Guarantee</p>
-          </motion.div>
+                Taste the Best Cuisines, Freshly Delivered
+              </h1>
+              <p className="text-base sm:text-lg text-muted-foreground mb-8">
+                Experience mouth-watering dishes crafted with fresh ingredients
+                by veteran cooks — delivered to your doorstep faster than ever.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                <Button
+                  onClick={() => push("/menu")}
+                  size="lg"
+                  className="text-lg"
+                >
+                  Order Now <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button
+                  onClick={() => push("/menu")}
+                  size="lg"
+                  variant="outline"
+                  className="text-lg"
+                >
+                  View Menu
+                </Button>
+              </div>
+            </motion.div>
+            {/* IMAGE */}
+            <motion.div
+              initial={{ x: 40, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex justify-center lg:justify-end w-full"
+            >
+              <Image
+                src="/images/resto.png"
+                alt="Restaurant freshly cooked dishes"
+                width={600}
+                height={400}
+                placeholder="blur"
+                blurDataURL="/images/blur_resto.png"
+                className="rounded-2xl shadow-xl object-cover max-w-full h-auto"
+                loading="lazy"
+              />
+            </motion.div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 px-6 py-3 gap-4 mt-8 bg-accent/50 rounded-lg">
+            <motion.div
+              initial={{ x: -40, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col items-center"
+            >
+              <Users />
+              <h3>50k+</h3>
+              <p className=" text-muted-foreground ">Happy Customers</p>
+            </motion.div>
+            <motion.div
+              initial={{ x: -40, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col items-center"
+            >
+              <Star />
+              <h3>4.8</h3>
+              <p className=" text-muted-foreground ">Average Rating</p>
+            </motion.div>
+            <motion.div
+              initial={{ x: 40, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col items-center"
+            >
+              <Clock />
+              <h3>30min</h3>
+              <p className=" text-muted-foreground ">Delivery Time</p>
+            </motion.div>
+            <motion.div
+              initial={{ x: 40, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col items-center"
+            >
+              <Shield />
+              <h3>100%</h3>
+              <p className=" text-muted-foreground ">Quality Guarantee</p>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
@@ -192,7 +198,10 @@ function FeaturedDishes({
   featuredDishes: FeaturedDishesProp[];
 }) {
   return (
-    <section>
+    <section
+      className="snap-start h-screen pt-4"
+      aria-labelledby="featured-dishes"
+    >
       <div className="flex flex-col text-center">
         <h1
           id="feature-dishes"
