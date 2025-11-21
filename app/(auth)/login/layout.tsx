@@ -4,9 +4,11 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="container mx-auto py-10">
-      <div className="bg-accent">
-        <div className="p-2 sm:p-4 md:p-6 lg:p-8">{children}</div>
+    <main className="py-10">
+      <div className="container mx-auto ">
+        <div className="bg-accent rounded-xl shadow-sm">
+          <div className="p-4 sm:p-6 md:p-8">{children}</div>
+        </div>
       </div>
     </main>
   );
