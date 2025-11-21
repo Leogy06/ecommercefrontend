@@ -7,8 +7,24 @@ import { Button } from "./ui/button";
 import { useRouterTransition } from "@/context/RouterTransitionContext";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./ui/drawer";
+import { useCart } from "@/hooks/cartItem";
 
 const pages = [
   { name: "Home", path: "/" },
@@ -108,13 +124,15 @@ export default function Header() {
               className="cursor-pointer rounded-full"
             />
 
-            <div className="hidden lg:flex gap-6 items-center">
+            <div className="hidden lg:flex gap-2 items-center">
               <PagesLgWidth />
+              <AddtoCartDrawer />
               <ModeToggle />
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="lg:hidden">
+            <div className="flex items-center gap-4 lg:hidden">
+              <AddtoCartDrawer />
               <Button
                 onClick={() => setOpenNavi(!openNavi)}
                 size="icon-sm"
@@ -134,12 +152,11 @@ function PagesLgWidth() {
   const { push } = useRouterTransition();
   const pathName = usePathname();
   return (
-    <nav className="hidden lg:flex items-center gap-4">
+    <nav className="hidden lg:flex items-center gap-3">
       {pages.map((p) => {
         const isActive = pathName === p.path;
         return (
           <Button
-            size={"lg"}
             key={p.name}
             variant={"link"}
             onClick={() => push(p.path)}
@@ -157,5 +174,53 @@ function PagesLgWidth() {
         );
       })}
     </nav>
+  );
+}
+
+function AddtoCartDrawer() {
+  const { cartItems } = useCart();
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <Button
+          className="relative px-4 py-2"
+          variant={"ghost"}
+          size={"icon-lg"}
+        >
+          {cartItems.length >= 0 && (
+            <span className="absolute -top-0.5 -right-0.5 text-white bg-red-500 p-0.5 rounded-full text-xs w-5 h-5">
+              {cartItems.length}
+            </span>
+          )}
+          <ShoppingCart />
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle className="text-lg font-semibold mb-4">
+            Add to cart
+          </DrawerTitle>
+        </DrawerHeader>
+        <div className="flex justify-center py-10 px-4">
+          {cartItems.length === 0 ? (
+            <span className="text-muted-foreground tracking-tight">
+              No items? Start Adding items
+            </span>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {cartItems.map((i) => (
+                <div
+                  className="flex items-center justify-between border-b py-6"
+                  key={i.menu_item_id}
+                >
+                  <span className="font-medium text-lg">{i.item.name}</span>
+                  <span>Quantity: {i.quantity}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
