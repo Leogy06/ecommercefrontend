@@ -2,13 +2,35 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouterTransition } from "@/context/RouterTransitionContext";
-import { ArrowRight, Clock, Heart, Shield, Star, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  Heart,
+  Minus,
+  Plus,
+  Shield,
+  ShoppingCart,
+  Star,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
 import { MenuItem } from "@/types";
+import { useCart } from "@/hooks/cartItem";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Input } from "@/components/ui/input";
+import { menuitem } from "framer-motion/client";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function Landing() {
   const { push } = useRouterTransition();
@@ -153,8 +175,11 @@ function FeaturedDishes({
   featuredDishes: MenuItem[];
   isLoading: boolean;
 }) {
+  const { addItem } = useCart();
+
   if (isLoading) return <FeaturedDishesSkeleton />;
   if (!featuredDishes) return null;
+
   return (
     <section
       className="snap-start py-6 md:py-8 lg:py-10"
@@ -230,13 +255,97 @@ function FeaturedDishes({
                   {f.description}
                 </p>
 
-                <Button className="w-full rounded-xl mt-3">Add to Cart</Button>
+                <AddToCartButton menuItem={f} />
               </div>
             </motion.div>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
+  const [quantity, setquantity] = useState(1);
+  const [selectedOptions, setselectedOptions] = useState([]);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className=" bg-primary text-white w-full">
+          <ShoppingCart /> Add to Cart
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl h-[90vh] sm:h-auto overflow-auto">
+        <DialogHeader>
+          <DialogTitle>Add to Cart item?</DialogTitle>
+          <DialogDescription>
+            Adjust the necessary order of the item
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col my-4 gap-3">
+          {/* item details  */}
+          <div className="space-y-3">
+            <Image
+              src={menuItem.images?.[0] ?? "/images/logo.png"}
+              height={224}
+              width={500}
+              alt={menuItem.name}
+              className="object-cover w-full h-56 rounded-lg"
+            />
+            <h2 className="text-xl">{menuItem.name}</h2>
+            <span className="text-lg flex items-center gap-4">
+              <Star fill="yellow" />
+              <p>
+                {menuItem.rating} ({menuItem.ratingCount} reviews){" "}
+              </p>
+            </span>
+            <p className="text-muted-foreground tracking-tight">
+              {menuItem.description}
+            </p>
+          </div>
+          {/* options */}
+          {menuItem.options.map((o, i) => (
+            <div key={i} className="space-y-3">
+              <span className="text-lg leading-tight">{o.label}</span>
+              <RadioGroup defaultValue={o.choices[0].label}>
+                {o.choices.map((c, i) => (
+                  <div
+                    className="bg-accent rounded-lg flex justify-between px-3 py-4 text-start"
+                    key={i}
+                  >
+                    <RadioGroupItem value={c.label} />
+                    <label>
+                      {c.label} {c.price}
+                    </label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          ))}
+          {/* quantity */}
+          <div className="px-2 py-4 flex justify-between bg-accent rounded-lg">
+            <span>Quantity</span>
+            <span className="flex items-center gap-2">
+              <Button
+                onClick={() => setquantity((prev) => prev - 1)}
+                variant={"outline"}
+                disabled={quantity < 2}
+              >
+                <Minus />
+              </Button>
+              {quantity}
+              <Button
+                onClick={() => setquantity((prev) => prev + 1)}
+                variant={"outline"}
+              >
+                <Plus />
+              </Button>
+            </span>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

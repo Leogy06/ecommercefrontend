@@ -6,12 +6,12 @@ export interface MenuItem {
   category_id: string;
   options: [
     {
-      Label: string;
-      Choices: [{ Label: string; Price: number }];
+      label: string;
+      choices: [{ label: string; price: number }];
     }
   ];
 
-  images: [string];
+  images: string[];
   rating: number;
   ratingCount: number;
   createdAt: string;
