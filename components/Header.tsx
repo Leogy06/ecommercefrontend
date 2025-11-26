@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import { useRouterTransition } from "@/context/RouterTransitionContext";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, ShoppingCart, X } from "lucide-react";
+import { Box, Menu, Minus, Plus, ShoppingCart, Trash, X } from "lucide-react";
 import Link from "next/link";
 import {
   Dialog,
@@ -178,7 +178,8 @@ function PagesLgWidth() {
 }
 
 function AddtoCartDrawer() {
-  const { cartItems } = useCart();
+  const { cartItems, removeItem } = useCart();
+  const { push } = useRouterTransition();
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -200,23 +201,74 @@ function AddtoCartDrawer() {
           <DrawerTitle className="text-lg font-semibold mb-4">
             Add to cart
           </DrawerTitle>
+          <DrawerDescription>Checkout item?</DrawerDescription>
         </DrawerHeader>
-        <div className="flex justify-center py-10 px-4">
+        <div className="flex container mx-auto justify-center py-10 px-4">
           {cartItems.length === 0 ? (
-            <span className="text-muted-foreground tracking-tight">
-              No items? Start Adding items
-            </span>
+            <div className="flex flex-col">
+              <Box />
+              <span className="text-muted-foreground tracking-tight">
+                No items? Start Adding items
+              </span>
+              <Button onClick={() => push("/menu")}>Browse Menu</Button>
+            </div>
           ) : (
-            <div className="flex flex-col items-stretch gap-3">
+            <div className="flex flex-col w-full gap-4 px-2">
               {cartItems.map((i) => (
                 <div
-                  className="flex w-full items-center justify-between border-b"
                   key={i.menu_item_id}
+                  className="flex items-center justify-between gap-4 py-3 border-b last:border-b-0"
                 >
-                  <span className="font-medium text-lg">
-                    {i.item?.name ?? "--"}
-                  </span>
-                  <span>Quantity: {i.quantity}</span>
+                  {/* LEFT SIDE */}
+                  <div className="flex items-start gap-3 flex-1">
+                    <Image
+                      src={i.item?.images?.[0] ?? "/placeholder.png"}
+                      height={60}
+                      width={80}
+                      alt="image-product"
+                      className="rounded-md object-cover border"
+                    />
+
+                    <div className="flex flex-col justify-between md:justify-center">
+                      <span className="font-semibold text-base leading-tight">
+                        {i.item?.name ?? "--"}
+                      </span>
+
+                      <div className="flex items-center gap-2 mt-1">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7 rounded-md"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+
+                        <span className="min-w-5 text-center">
+                          {i.quantity}
+                        </span>
+
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7 rounded-md"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* RIGHT SIDE */}
+                  <div className="flex flex-col items-end gap-2">
+                    <span className="font-semibold text-base">$24.90</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-100"
+                    >
+                      <Trash className="h-5 w-5" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
