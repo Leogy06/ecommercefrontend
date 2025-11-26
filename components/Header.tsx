@@ -205,12 +205,20 @@ function AddtoCartDrawer() {
         </DrawerHeader>
         <div className="flex container mx-auto justify-center py-10 px-4">
           {cartItems.length === 0 ? (
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center justify-center gap-2">
               <Box />
               <span className="text-muted-foreground tracking-tight">
                 No items? Start Adding items
               </span>
-              <Button onClick={() => push("/menu")}>Browse Menu</Button>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  //add close the drawer?
+                  push("/menu");
+                }}
+              >
+                Browse Menu
+              </Button>
             </div>
           ) : (
             <div className="flex flex-col w-full gap-4 px-2">
