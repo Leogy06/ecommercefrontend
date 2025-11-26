@@ -17,8 +17,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
-import { CartItems, MenuItem } from "@/types";
-import { useCart } from "@/hooks/cartItem";
+import { MenuItem } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +29,7 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useCart } from "@/context/CartContext";
 
 export default function Landing() {
   const { push } = useRouterTransition();
@@ -279,6 +279,7 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
       description: "This is test toaster",
       position: "top-center",
       richColors: true,
+      closeButton: true,
     });
 
     console.log({ quantity, selectedOptions, menuItem: menuItem.id });
@@ -286,6 +287,7 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
       quantity,
       selected_options: selectedOptions,
       menu_item_id: menuItem.id,
+      item: menuItem,
     });
   };
 

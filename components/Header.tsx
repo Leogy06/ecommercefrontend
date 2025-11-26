@@ -24,7 +24,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { useCart } from "@/hooks/cartItem";
+import { useCart } from "@/context/CartContext";
 
 const pages = [
   { name: "Home", path: "/" },
@@ -207,13 +207,15 @@ function AddtoCartDrawer() {
               No items? Start Adding items
             </span>
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col items-stretch gap-3">
               {cartItems.map((i) => (
                 <div
-                  className="flex items-center justify-between border-b py-6"
+                  className="flex w-full items-center justify-between border-b"
                   key={i.menu_item_id}
                 >
-                  <span className="font-medium text-lg">{i.item.name}</span>
+                  <span className="font-medium text-lg">
+                    {i.item?.name ?? "--"}
+                  </span>
                   <span>Quantity: {i.quantity}</span>
                 </div>
               ))}

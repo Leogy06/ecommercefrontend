@@ -7,7 +7,7 @@ import React from "react";
 import { Provider as ProviderRedux } from "react-redux";
 import { store } from "@/redux/store";
 import { Toaster } from "@/components/ui/sonner";
-import { CartProvider } from "./CartContext";
+import { CartProvider } from "../context/CartContext";
 
 const Header = dynamic(() => import("@/components/Header"), {
   ssr: false,
