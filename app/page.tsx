@@ -39,18 +39,16 @@ export default function Landing() {
     useGetMenuItemsQuery();
 
   return (
-    <main className="snap-y snap-mandatory h-screen overflow-y-scroll scroll-smooth">
+    <main className="h-screen overflow-y-auto">
       <div className="p-2 sm:p-4 md:p-6 lg:p-8">
         <div className="flex flex-col">
           {/* Section 1 – Hero */}
           <HeroSection push={push} />
           {/* Section 2 – Featured Dishes */}
-          <section className="snap-start ">
-            <FeaturedDishes
-              isLoading={isFeaturedDishLoading}
-              featuredDishes={featuredDishes || []}
-            />
-          </section>
+          <FeaturedDishes
+            isLoading={isFeaturedDishLoading}
+            featuredDishes={featuredDishes || []}
+          />
         </div>
       </div>
     </main>
@@ -59,7 +57,7 @@ export default function Landing() {
 
 function HeroSection({ push }: { push: (path: string) => void }) {
   return (
-    <section className=" snap-start pt-4" aria-labelledby="hero-heading">
+    <section className=" pt-4" aria-labelledby="hero-heading">
       <div className="container mx-auto">
         <div className="bg-linear-to-b from-red-100/40 to-transparent dark:from-red-500/20 rounded-lg">
           <div className="p-2 sm:p-4 md:p-6 lg:p-8">
@@ -69,6 +67,7 @@ function HeroSection({ push }: { push: (path: string) => void }) {
                 initial={{ x: -40, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
+                viewport={{ once: true }}
                 className="flex flex-col max-w-xl text-center lg:text-left"
               >
                 <h1
@@ -105,6 +104,7 @@ function HeroSection({ push }: { push: (path: string) => void }) {
                 initial={{ x: 40, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
+                viewport={{ once: true }}
                 className="flex justify-center lg:justify-end w-full"
               >
                 <Image
@@ -125,6 +125,7 @@ function HeroSection({ push }: { push: (path: string) => void }) {
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex flex-col items-center"
+                viewport={{ once: true }}
               >
                 <Users />
                 <h3>50k+</h3>
@@ -135,6 +136,7 @@ function HeroSection({ push }: { push: (path: string) => void }) {
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex flex-col items-center"
+                viewport={{ once: true }}
               >
                 <Star />
                 <h3>4.8</h3>
@@ -145,6 +147,7 @@ function HeroSection({ push }: { push: (path: string) => void }) {
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex flex-col items-center"
+                viewport={{ once: true }}
               >
                 <Clock />
                 <h3>30min</h3>
@@ -155,6 +158,7 @@ function HeroSection({ push }: { push: (path: string) => void }) {
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex flex-col items-center"
+                viewport={{ once: true }}
               >
                 <Shield />
                 <h3>100%</h3>
@@ -182,7 +186,7 @@ function FeaturedDishes({
 
   return (
     <section
-      className="snap-start py-6 md:py-8 lg:py-10"
+      className="py-6 md:py-8 lg:py-10"
       aria-labelledby="featured-dishes"
     >
       <div className="flex flex-col text-center">
@@ -203,10 +207,9 @@ function FeaturedDishes({
               initial={{ y: 40, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              viewport={{ amount: 0.2 }}
-              whileHover={{ scale: 1.03 }}
-              className=" bg-accent rounded-2xl shadow-md overflow-hidden 
-                 hover:shadow-xl transition-all duration-300"
+              viewport={{ amount: 0.3, once: true }}
+              className=" bg-accent rounded-2xl overflow-hidden 
+                 hover:shadow-xl transition-all duration-300 shadow-primary/50"
             >
               {/* IMAGE + FAVORITE BUTTON */}
               <div className="relative">
@@ -351,7 +354,7 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
 
 function FeaturedDishesSkeleton() {
   return (
-    <section className="snap-start py-6 md:py-8 lg:py-10">
+    <section className=" py-6 md:py-8 lg:py-10">
       <div className="flex flex-col text-center">
         <h1 className="text-2xl font-bold text-foreground-900 leading-tight">
           Featured Dishes
