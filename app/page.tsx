@@ -15,10 +15,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import { useState } from "react";
 import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
-import { MenuItem } from "@/types";
+import { CartItems, MenuItem } from "@/types";
 import { useCart } from "@/hooks/cartItem";
 import {
   Dialog,
@@ -28,9 +27,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-import { Input } from "@/components/ui/input";
-import { menuitem } from "framer-motion/client";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export default function Landing() {
   const { push } = useRouterTransition();
@@ -270,7 +269,25 @@ function FeaturedDishes({
 
 function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
   const [quantity, setquantity] = useState(1);
-  const [selectedOptions, setselectedOptions] = useState([]);
+  const [selectedOptions, setselectedOptions] = useState<
+    { label: string; choice: string }[] | null
+  >([]);
+  const { addItem } = useCart();
+
+  const handleAddItem = () => {
+    toast.success("Test", {
+      description: "This is test toaster",
+      position: "top-center",
+      richColors: true,
+    });
+
+    console.log({ quantity, selectedOptions, menuItem: menuItem.id });
+    addItem({
+      quantity,
+      selected_options: selectedOptions,
+      menu_item_id: menuItem.id,
+    });
+  };
 
   return (
     <Dialog>
@@ -307,24 +324,39 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
               {menuItem.description}
             </p>
           </div>
+
           {/* options */}
-          {menuItem.options.map((o, i) => (
-            <div key={i} className="space-y-3">
-              <span className="text-lg leading-tight">{o.label}</span>
-              <RadioGroup defaultValue={o.choices[0].label}>
-                {o.choices.map((c, i) => (
+          {menuItem.options.map((o, optionIndex) => (
+            <RadioGroup
+              key={optionIndex}
+              defaultValue={o.choices[0].label}
+              onValueChange={(val) => {
+                setselectedOptions((prev) => {
+                  const updated = [...(prev || [])];
+                  updated[optionIndex] = { label: o.label, choice: val };
+
+                  return updated;
+                });
+              }}
+            >
+              <div className="space-y-3">
+                <span className="text-lg leading-tight">{o.label}</span>
+                {o.choices.map((c, choiceIndex) => (
                   <div
                     className="bg-accent rounded-lg flex justify-between px-3 py-4 text-start"
-                    key={i}
+                    key={choiceIndex}
                   >
                     <RadioGroupItem value={c.label} />
-                    <label>
+                    <Label
+                      htmlFor={`option-${optionIndex}-choice-${choiceIndex}`}
+                      id={`option-${optionIndex}-choice-${choiceIndex}`}
+                    >
                       {c.label} {c.price}
-                    </label>
+                    </Label>
                   </div>
                 ))}
-              </RadioGroup>
-            </div>
+              </div>
+            </RadioGroup>
           ))}
           {/* quantity */}
           <div className="px-2 py-4 flex justify-between bg-accent rounded-lg">
@@ -346,6 +378,8 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
               </Button>
             </span>
           </div>
+
+          <Button onClick={handleAddItem}>Add to Cart</Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -26,6 +26,6 @@ export interface UserCart {
 export interface CartItems {
   menu_item_id: string;
   quantity: number;
-  selected_options: [{ label: string; choice: string }];
-  item: MenuItem;
+  selected_options: { label: string; choice: string }[] | null;
+  item?: MenuItem;
 }

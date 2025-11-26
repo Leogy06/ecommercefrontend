@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import React from "react";
 import { Provider as ProviderRedux } from "react-redux";
 import { store } from "@/redux/store";
+import { Toaster } from "@/components/ui/sonner";
+import { CartProvider } from "./CartContext";
 
 const Header = dynamic(() => import("@/components/Header"), {
   ssr: false,
@@ -21,9 +23,12 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         disableTransitionOnChange
       >
         <RouterTransitionProvider>
-          <div className="flex flex-col h-screen overflow-hidden">
-            <Header /> {children}
-          </div>
+          <CartProvider>
+            <div className="flex flex-col h-screen overflow-hidden">
+              <Header /> {children}
+              <Toaster />
+            </div>
+          </CartProvider>
         </RouterTransitionProvider>
       </ThemeProvider>
     </ProviderRedux>
