@@ -14,6 +14,7 @@ interface CarContextType {
   addItem: (item: CartItems) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
+  adjustQuantity: (id: string, adjust: "add" | "reduce") => void;
 }
 
 const CartContext = createContext<CarContextType | undefined>(undefined);
@@ -21,10 +22,16 @@ const CartContext = createContext<CarContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItems[]>([]);
 
+  //load the guest cart from the storage
   useEffect(() => {
     const savedCartitems = localStorage.getItem("guest_cart");
     if (savedCartitems) setCartItems(JSON.parse(savedCartitems));
   }, []);
+
+  // save cart whenever cartitems changes
+  useEffect(() => {
+    localStorage.setItem("guest_cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addItem = (item: CartItems) => {
     setCartItems((prevItems) => {
@@ -51,8 +58,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("guest_cart");
   };
 
+  const adjustQuantity = (id: string, adjust: "reduce" | "add") => {
+    if (!id) return;
+
+    setCartItems((prevItems) => {
+      const updated = prevItems.map((i) => {
+        if (i.menu_item_id !== id) return i;
+
+        if (adjust === "add") {
+          return { ...i, quantity: i.quantity + 1 };
+        }
+
+        // adjust === "reduce"
+        return { ...i, quantity: i.quantity - 1 };
+      });
+
+      //remove product when zero qty
+      return updated.filter((i) => i.quantity > 0);
+    });
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addItem, removeItem, clearCart }}>
+    <CartContext.Provider
+      value={{ adjustQuantity, cartItems, addItem, removeItem, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );

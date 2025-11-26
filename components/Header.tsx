@@ -178,7 +178,7 @@ function PagesLgWidth() {
 }
 
 function AddtoCartDrawer() {
-  const { cartItems, removeItem } = useCart();
+  const { cartItems, removeItem, adjustQuantity } = useCart();
   const { push } = useRouterTransition();
   return (
     <Drawer>
@@ -247,6 +247,9 @@ function AddtoCartDrawer() {
                           variant="outline"
                           size="icon"
                           className="h-7 w-7 rounded-md"
+                          onClick={() =>
+                            adjustQuantity(i.menu_item_id, "reduce")
+                          }
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
@@ -259,6 +262,7 @@ function AddtoCartDrawer() {
                           variant="outline"
                           size="icon"
                           className="h-7 w-7 rounded-md"
+                          onClick={() => adjustQuantity(i.menu_item_id, "add")}
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -272,6 +276,7 @@ function AddtoCartDrawer() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      onClick={() => removeItem(i.menu_item_id)}
                       className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-100"
                     >
                       <Trash className="h-5 w-5" />

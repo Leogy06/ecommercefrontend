@@ -178,8 +178,6 @@ function FeaturedDishes({
   featuredDishes: MenuItem[];
   isLoading: boolean;
 }) {
-  const { addItem } = useCart();
-
   if (isLoading) return <FeaturedDishesSkeleton />;
   if (!featuredDishes) return null;
 
@@ -275,14 +273,12 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
   const { addItem } = useCart();
 
   const handleAddItem = () => {
-    toast.success("Test", {
-      description: "This is test toaster",
-      position: "top-center",
-      richColors: true,
+    toast.success("Item Added Successfully", {
+      description: "See your cart to checkout the items",
+      position: "top-right",
       closeButton: true,
     });
 
-    console.log({ quantity, selectedOptions, menuItem: menuItem.id });
     addItem({
       quantity,
       selected_options: selectedOptions,
