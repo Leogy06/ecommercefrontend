@@ -178,7 +178,7 @@ function PagesLgWidth() {
 }
 
 function AddtoCartDrawer() {
-  const { cartItems, removeItem, adjustQuantity } = useCart();
+  const { cartItems, removeItem, adjustQuantity, getSubtotal } = useCart();
   const { push } = useRouterTransition();
   return (
     <Drawer>
@@ -272,7 +272,9 @@ function AddtoCartDrawer() {
 
                   {/* RIGHT SIDE */}
                   <div className="flex flex-col items-end gap-2">
-                    <span className="font-semibold text-base">$24.90</span>
+                    <span className="font-semibold text-base">
+                      ₱ {(i.item?.price ?? 0) * i.quantity}
+                    </span>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -284,6 +286,12 @@ function AddtoCartDrawer() {
                   </div>
                 </div>
               ))}
+              <div className="flex justify-between items-center w-full mt-6 px-2">
+                <span className="text-lg font-medium">Subtotal</span>
+                <span className="text-lg font-semibold">
+                  ₱ {getSubtotal().toFixed(2)}
+                </span>
+              </div>
             </div>
           )}
         </div>
