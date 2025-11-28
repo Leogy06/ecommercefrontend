@@ -11,6 +11,7 @@ import { Box, Menu, Minus, Plus, ShoppingCart, Trash, X } from "lucide-react";
 import Link from "next/link";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -203,28 +204,30 @@ function AddtoCartDrawer() {
           </DrawerTitle>
           <DrawerDescription>Checkout item?</DrawerDescription>
         </DrawerHeader>
-        <div className="flex container mx-auto justify-center py-10 px-4">
+        <div className="flex container mx-auto justify-center py-10 px-4 max-h-1/2 overflow-y-auto">
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2">
               <Box />
               <span className="text-muted-foreground tracking-tight">
                 No items? Start Adding items
               </span>
-              <Button
-                className="w-full"
-                onClick={() => {
-                  //add close the drawer?
-                  push("/menu");
-                }}
-              >
-                Browse Menu
-              </Button>
+              <DialogClose asChild>
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    //add close the drawer?
+                    push("/menu");
+                  }}
+                >
+                  Browse Menu
+                </Button>
+              </DialogClose>
             </div>
           ) : (
             <div className="flex flex-col w-full gap-4 px-2">
               {cartItems.map((i) => (
                 <div
-                  key={i.menu_item_id}
+                  key={i.id}
                   className="flex items-center justify-between gap-4 py-3 border-b last:border-b-0"
                 >
                   {/* LEFT SIDE */}
@@ -272,11 +275,25 @@ function AddtoCartDrawer() {
 
                   {/* RIGHT SIDE */}
                   <div className="flex flex-col items-end gap-2">
-                    <span className="font-semibold text-base">
+                    <span className="font-semibold text-base text-right">
                       ₱ {(i.item?.price ?? 0) * i.quantity}
+                      {/* put choices' price */}
+                      {i.selected_options && (
+                        <div className="flex flex-col gap-2">
+                          <span>{i.selected_options?.label ?? ""}</span>
+                          <span>{i.selected_options.choices?.label ?? ""}</span>
+
+                          {/* the price of adds on  */}
+                          {i.selected_options?.choices?.price !== undefined &&
+                            i.selected_options?.choices?.price !== null && (
+                              <span>{`+ ₱ ${i.selected_options.choices.price}`}</span>
+                            )}
+                        </div>
+                      )}
                     </span>
                     <Button
                       variant="ghost"
+                      title="Remove item?"
                       size="icon"
                       onClick={() => removeItem(i.menu_item_id)}
                       className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-100"
@@ -286,8 +303,10 @@ function AddtoCartDrawer() {
                   </div>
                 </div>
               ))}
-              <div className="flex justify-between items-center w-full mt-6 px-2">
-                <span className="text-lg font-medium">Subtotal</span>
+
+              {/* subtotal */}
+              <div className="flex justify-end items-center w-full mt-6 px-2  pb-3 gap-4">
+                <span className="text-lg font-medium">Subtotal:</span>
                 <span className="text-lg font-semibold">
                   ₱ {getSubtotal().toFixed(2)}
                 </span>

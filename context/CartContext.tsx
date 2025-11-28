@@ -35,18 +35,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cartItems]);
 
   const addItem = (item: CartItems) => {
-    setCartItems((prevItems) => {
-      const existing = prevItems.find(
-        (i) => i.menu_item_id === item.menu_item_id
+    setCartItems((prev) => {
+      const existing = prev.find(
+        (i) => i.option === item.option && i.menu_item_id === item.menu_item_id
       );
+
       if (existing) {
-        return prevItems.map((i) =>
-          i.menu_item_id === item.menu_item_id
-            ? { ...i, quantity: i.quantity + item.quantity } // add quantity
-            : i
+        return prev.map((i) =>
+          i === existing ? { ...i, quantity: i.quantity + item.quantity } : i
         );
       }
-      return [...prevItems, item];
+
+      return [item, ...prev];
     });
   };
 

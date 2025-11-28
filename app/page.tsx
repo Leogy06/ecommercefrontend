@@ -15,9 +15,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
-import { MenuItem } from "@/types";
+import { CartItems, Choices, MenuItem } from "@/types";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +30,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
+import { v4 as uuid } from "uuid";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Landing() {
   const { push } = useRouterTransition();
@@ -266,24 +268,46 @@ function FeaturedDishes({
 }
 
 function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
-  const [quantity, setquantity] = useState(1);
-  const [selectedOptions, setselectedOptions] = useState<
-    { label: string; choice: string }[] | null
-  >([]);
+  const [selectedOptions, setSelectedOptions] = useState<Choices[]>([]);
+  const [quantity, setQuantity] = useState(1);
+
+
   const { addItem } = useCart();
 
   const handleAddItem = () => {
+    if (selectedOptions.length !== menuItem.options.length) {
+      toast.error("Please select all required options.");
+      return;
+    }
+
+    const cartItem: CartItems = {
+      id: crypto.randomUUID(),
+      menu_item_id: menuItem.id,
+      quantity,
+      selectedOptions,
+      item: menuItem,
+    };
+
+    addItem(cartItem);
+
     toast.success("Item Added Successfully", {
       description: "See your cart to checkout the items",
       position: "top-right",
-      closeButton: true,
     });
+  };
 
-    addItem({
-      quantity,
-      selected_options: selectedOptions,
-      menu_item_id: menuItem.id,
-      item: menuItem,
+
+  const handleOptionChange = (optionIndex: number, selectedLabel: string) => {
+    const optionGroup = menuItem.options[optionIndex];
+
+    // get the actual choice object
+    const choice = optionGroup.choices.find((c) => c.label === selectedLabel);
+    if (!choice) return;
+
+    setSelectedOptions((prev) => {
+      const updated = [...prev];
+      updated[optionIndex] = choice; // store choice per group
+      return updated;
     });
   };
 
@@ -323,45 +347,36 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
             </p>
           </div>
 
-          {/* options */}
+          {/* choices option */}
           {menuItem.options.map((o, optionIndex) => (
-            <RadioGroup
-              key={optionIndex}
-              defaultValue={o.choices[0].label}
-              onValueChange={(val) => {
-                setselectedOptions((prev) => {
-                  const updated = [...(prev || [])];
-                  updated[optionIndex] = { label: o.label, choice: val };
+            <div key={optionIndex}>
+              <h2>{o.label}</h2>
 
-                  return updated;
-                });
-              }}
-            >
-              <div className="space-y-3">
-                <span className="text-lg leading-tight">{o.label}</span>
-                {o.choices.map((c, choiceIndex) => (
+              <RadioGroup
+                defaultValue={o.choices[0].label}
+                onValueChange={(value) =>
+                  handleOptionChange(optionIndex, value)
+                }
+              >
+                {o.choices.map((c, choicesIndex) => (
                   <div
-                    className="bg-accent rounded-lg flex justify-between px-3 py-4 text-start"
-                    key={choiceIndex}
+                    key={choicesIndex}
+                    className="flex items-center space-x-2"
                   >
-                    <RadioGroupItem value={c.label} />
-                    <Label
-                      htmlFor={`option-${optionIndex}-choice-${choiceIndex}`}
-                      id={`option-${optionIndex}-choice-${choiceIndex}`}
-                    >
-                      {c.label} {c.price}
-                    </Label>
+                    <RadioGroupItem value={c.label} id={c.label} />
+                    <Label htmlFor={c.label}>{c.label}</Label>
                   </div>
                 ))}
-              </div>
-            </RadioGroup>
+              </RadioGroup>
+            </div>
           ))}
+
           {/* quantity */}
           <div className="px-2 py-4 flex justify-between bg-accent rounded-lg">
             <span>Quantity</span>
             <span className="flex items-center gap-2">
               <Button
-                onClick={() => setquantity((prev) => prev - 1)}
+                onClick={() => setQuantity((prev) => prev - 1)}
                 variant={"outline"}
                 disabled={quantity < 2}
               >
@@ -369,7 +384,7 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
               </Button>
               {quantity}
               <Button
-                onClick={() => setquantity((prev) => prev + 1)}
+                onClick={() => setQuantity((prev) => prev + 1)}
                 variant={"outline"}
               >
                 <Plus />
