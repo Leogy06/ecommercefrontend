@@ -16,6 +16,7 @@ interface CarContextType {
   clearCart: () => void;
   adjustQuantity: (id: string, adjust: "add" | "reduce") => void;
   getSubtotal: () => number;
+  getAddOnsSubtotal: () => number;
 }
 
 const CartContext = createContext<CarContextType | undefined>(undefined);
@@ -94,6 +95,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const getAddOnsSubtotal = () => {
+    return cartItems.reduce(
+      (sum, item) =>
+        sum +
+        (item.selectedOptions?.reduce(
+          (total, option) => total + (option.choices.price ?? 0),
+          0
+        ) ?? 0),
+      0
+    );
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -103,6 +116,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         removeItem,
         clearCart,
         getSubtotal,
+        getAddOnsSubtotal,
       }}
     >
       {children}

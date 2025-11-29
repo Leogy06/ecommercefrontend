@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
 import { CartItems, Choices, MenuItem } from "@/types";
 import {
@@ -26,8 +26,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 

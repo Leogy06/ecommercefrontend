@@ -179,7 +179,13 @@ function PagesLgWidth() {
 }
 
 function AddtoCartDrawer() {
-  const { cartItems, removeItem, adjustQuantity, getSubtotal } = useCart();
+  const {
+    cartItems,
+    removeItem,
+    adjustQuantity,
+    getSubtotal,
+    getAddOnsSubtotal,
+  } = useCart();
   const { push } = useRouterTransition();
   return (
     <Drawer>
@@ -303,10 +309,18 @@ function AddtoCartDrawer() {
               ))}
 
               {/* subtotal */}
-              <div className="flex justify-end items-center w-full mt-6 px-2  pb-3 gap-4">
+              <div className="flex flex-col justify-end items-end w-full mt-6 px-2 pb-3 gap-2">
                 <span className="text-lg font-medium">Subtotal:</span>
-                <span className="text-lg font-semibold">
-                  ₱ {getSubtotal().toFixed(2)}
+                <span>
+                  {" "}
+                  ₱
+                  {(getSubtotal() + getAddOnsSubtotal()).toLocaleString(
+                    "en-PH",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )}
                 </span>
               </div>
             </div>
