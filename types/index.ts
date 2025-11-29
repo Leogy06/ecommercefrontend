@@ -1,6 +1,9 @@
 export interface Choices {
   label: string;
-  price: string;
+  choices: {
+    label: string;
+    price: number;
+  };
 }
 
 export interface MenuItem {
@@ -12,7 +15,10 @@ export interface MenuItem {
   options: [
     {
       label: string;
-      choices: Choices[];
+      choices: {
+        label: string;
+        price: number;
+      }[];
     }
   ];
 
@@ -32,6 +38,6 @@ export interface CartItems {
   id: string;
   menu_item_id: string;
   quantity: number;
-  selectedOptions: Choices[];
+  selectedOptions: Choices[] | undefined;
   item?: MenuItem;
 }

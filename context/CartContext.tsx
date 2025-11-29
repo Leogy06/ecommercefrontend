@@ -35,23 +35,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cartItems]);
 
   const addItem = (item: CartItems) => {
-    setCartItems((prev) => {
-      const existing = prev.find(
-        (i) => i.option === item.option && i.menu_item_id === item.menu_item_id
+    setCartItems((prevItems) => {
+      const existing = prevItems.find(
+        (p) =>
+          p.menu_item_id === item.menu_item_id &&
+          checkExistingSelectedOption(p.selectedOptions, item.selectedOptions)
       );
 
       if (existing) {
-        return prev.map((i) =>
-          i === existing ? { ...i, quantity: i.quantity + item.quantity } : i
+        return prevItems.map((p) =>
+          p.menu_item_id === existing.menu_item_id &&
+          checkExistingSelectedOption(
+            p.selectedOptions,
+            existing.selectedOptions
+          )
+            ? { ...p, quantity: p.quantity + item.quantity }
+            : p
         );
       }
 
-      return [item, ...prev];
+      return [...prevItems, item];
     });
   };
 
   const removeItem = (id: string) => {
-    setCartItems((prev) => prev.filter((i) => i.menu_item_id !== id));
+    setCartItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   const clearCart = () => {
@@ -106,4 +114,20 @@ export function useCart() {
   const context = useContext(CartContext);
   if (!context) throw new Error("useCart must be used within a CartProvider");
   return context;
+}
+
+//helper functions
+// check if selected options are already existed
+
+function checkExistingSelectedOption(
+  existingOptions: CartItems["selectedOptions"],
+  newOptions: CartItems["selectedOptions"]
+) {
+  if (!existingOptions || !newOptions) return false;
+
+  return existingOptions.every((o) =>
+    newOptions.some(
+      (n) => o.label === n.label && o.choices.label === n.choices.label
+    )
+  );
 }

@@ -278,16 +278,14 @@ function AddtoCartDrawer() {
                     <span className="font-semibold text-base text-right">
                       ₱ {(i.item?.price ?? 0) * i.quantity}
                       {/* put choices' price */}
-                      {i.selected_options && (
+                      {i.selectedOptions && (
                         <div className="flex flex-col gap-2">
-                          <span>{i.selected_options?.label ?? ""}</span>
-                          <span>{i.selected_options.choices?.label ?? ""}</span>
-
-                          {/* the price of adds on  */}
-                          {i.selected_options?.choices?.price !== undefined &&
-                            i.selected_options?.choices?.price !== null && (
-                              <span>{`+ ₱ ${i.selected_options.choices.price}`}</span>
-                            )}
+                          {i.selectedOptions.map((o, optionIndex) => (
+                            <div key={optionIndex} className="space-y-1">
+                              <span>{o.choices.label}</span>
+                              <span> + {o.choices.price}</span>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </span>
@@ -295,7 +293,7 @@ function AddtoCartDrawer() {
                       variant="ghost"
                       title="Remove item?"
                       size="icon"
-                      onClick={() => removeItem(i.menu_item_id)}
+                      onClick={() => removeItem(i.id)}
                       className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-100"
                     >
                       <Trash className="h-5 w-5" />

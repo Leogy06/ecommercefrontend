@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
 import { CartItems, Choices, MenuItem } from "@/types";
 import {
@@ -30,8 +30,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
-import { v4 as uuid } from "uuid";
-import { Checkbox } from "@/components/ui/checkbox";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Landing() {
   const { push } = useRouterTransition();
@@ -268,16 +274,26 @@ function FeaturedDishes({
 }
 
 function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const [selectedOptions, setSelectedOptions] = useState<Choices[]>([]);
   const [quantity, setQuantity] = useState(1);
-
+  const selectRef = useRef<HTMLDivElement>(null);
 
   const { addItem } = useCart();
 
   const handleAddItem = () => {
-    if (selectedOptions.length !== menuItem.options.length) {
-      toast.error("Please select all required options.");
-      return;
+    if (menuItem.options.length > 0) {
+      if (selectedOptions.length === 0) {
+        if (selectRef.current) {
+          selectRef.current.focus();
+          toast.error("Please select all options", {
+            richColors: true,
+            position: "bottom-center",
+          });
+          return;
+        }
+      }
     }
 
     const cartItem: CartItems = {
@@ -288,31 +304,47 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
       item: menuItem,
     };
 
+
     addItem(cartItem);
 
     toast.success("Item Added Successfully", {
       description: "See your cart to checkout the items",
-      position: "top-right",
+      position: "top-center",
+      closeButton: true,
     });
   };
 
+  const handleReset = () => {
+    setSelectedOptions([]);
+    setQuantity(1);
+  };
 
-  const handleOptionChange = (optionIndex: number, selectedLabel: string) => {
-    const optionGroup = menuItem.options[optionIndex];
+  const handleDialogChange = (open: boolean) => {
+    if (!open) {
+      // Dialog is closing
+      handleReset();
+    }
+    setIsOpen(open);
+  };
 
-    // get the actual choice object
-    const choice = optionGroup.choices.find((c) => c.label === selectedLabel);
-    if (!choice) return;
-
-    setSelectedOptions((prev) => {
-      const updated = [...prev];
-      updated[optionIndex] = choice; // store choice per group
-      return updated;
-    });
+  const handleOptionChange = (
+    selectedLabel: string,
+    labelChoice: string,
+    labelPrice: number
+  ) => {
+    setSelectedOptions([
+      {
+        label: selectedLabel,
+        choices: {
+          label: labelChoice,
+          price: labelPrice,
+        },
+      },
+    ]);
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={handleDialogChange}>
       <DialogTrigger asChild>
         <Button className=" bg-primary text-white w-full">
           <ShoppingCart /> Add to Cart
@@ -348,28 +380,44 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
           </div>
 
           {/* choices option */}
-          {menuItem.options.map((o, optionIndex) => (
-            <div key={optionIndex}>
-              <h2>{o.label}</h2>
-
-              <RadioGroup
-                defaultValue={o.choices[0].label}
-                onValueChange={(value) =>
-                  handleOptionChange(optionIndex, value)
-                }
-              >
-                {o.choices.map((c, choicesIndex) => (
-                  <div
-                    key={choicesIndex}
-                    className="flex items-center space-x-2"
+          {menuItem.options && (
+            <div
+              ref={selectRef}
+              tabIndex={-1} // makes it focusable programmatically
+              className="space-y-3 focus:border-primary focus:ring-2 focus:ring-primary rounded-lg p-4"
+            >
+              {menuItem.options.map((o, optionIndex) => (
+                <div key={optionIndex}>
+                  <h2 className="text-lg my-3 font-bold">{o.label}</h2>
+                  <Select
+                    onValueChange={(indexString) =>
+                      handleOptionChange(
+                        o.label,
+                        o.choices[Number(indexString)].label,
+                        o.choices[Number(indexString)].price
+                      )
+                    }
                   >
-                    <RadioGroupItem value={c.label} id={c.label} />
-                    <Label htmlFor={c.label}>{c.label}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {o.choices.map((c, choicesIndex) => (
+                        <SelectItem
+                          value={choicesIndex.toString()}
+                          key={choicesIndex}
+                        >
+                          <span>
+                            {c.label ?? ""} {c.price ?? ""}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
 
           {/* quantity */}
           <div className="px-2 py-4 flex justify-between bg-accent rounded-lg">
