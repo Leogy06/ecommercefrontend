@@ -5,16 +5,29 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetCategoriesQuery } from "@/redux/api/categoryApiSlice";
 import { useGetMenuItemsQuery } from "@/redux/api/menuItemApiSlice";
 import { Categories as CategoryType, MenuItem } from "@/types";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Heart, Star } from "lucide-react";
 import { AddToCartButton } from "../page";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type DishFilter = "popular" | "cheapest" | "expensive";
 
 export default function Menu() {
   const [menuCategory, setMenuCategory] = useState("");
   const { data: categories, isLoading: isCategoriesLoading } =
     useGetCategoriesQuery();
+
+  const [dishFilter, setdishFilter] = useState<DishFilter>("popular");
 
   const { data: menuItems, isLoading: isMenuItemLoading } =
     useGetMenuItemsQuery(menuCategory);
@@ -23,16 +36,51 @@ export default function Menu() {
     setMenuCategory(categoryId);
   };
 
+  const handleChangeDishFilter = (val: DishFilter) => {
+    setdishFilter(val);
+  };
+
+  const memoMenuItems = useMemo(() => {
+    if (!menuItems) return [];
+
+    let sorted = [...menuItems];
+
+    switch (dishFilter) {
+      case "cheapest":
+        sorted.sort((a, b) => a.price - b.price);
+
+        break;
+      case "expensive":
+        sorted.sort((a, b) => b.price - a.price);
+
+        break;
+
+      case "popular":
+      default:
+        break;
+    }
+
+    return sorted;
+  }, [menuItems, dishFilter]);
+
   return (
     <>
       <h1 className="text-2xl font-bold">Our Menu</h1>
+      <p className="text-muted-foreground ">
+        Discover dishes you will actually love!
+      </p>
       <Categories
         categories={categories || []}
         isLoading={isCategoriesLoading}
         handleChangeMenuCategory={handleChangeMenuCategory}
         menuCategory={menuCategory}
+        handleChangeDishFilter={handleChangeDishFilter}
+        dishFilter={dishFilter}
       />
-      <MenuItems menuItems={menuItems || []} isLoading={isMenuItemLoading} />
+      <MenuItems
+        menuItems={memoMenuItems || []}
+        isLoading={isMenuItemLoading}
+      />
     </>
   );
 }
@@ -42,11 +90,15 @@ function Categories({
   isLoading,
   handleChangeMenuCategory,
   menuCategory,
+  handleChangeDishFilter,
+  dishFilter,
 }: {
   categories: CategoryType[];
   isLoading: boolean;
   handleChangeMenuCategory: (param: string) => void;
   menuCategory: string;
+  handleChangeDishFilter: (val: DishFilter) => void;
+  dishFilter: DishFilter;
 }) {
   if (isLoading)
     return (
@@ -62,23 +114,38 @@ function Categories({
       whileInView={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3, ease: "linear", delay: 0.8 }}
       viewport={{ amount: 0.3, once: true }}
-      className="h-18 gap-2 flex items-center overflow-x-auto overflow-y-hidden"
+      className="gap-4 flex flex-col md:flex-row justify-between overflow-x-auto overflow-y-hidden"
     >
-      <Button
-        onClick={() => handleChangeMenuCategory("")}
-        variant={menuCategory === "" ? "default" : "outline"}
-      >
-        All
-      </Button>
-      {categories?.map((c) => (
+      <div className="flex items-center gap-2">
         <Button
-          variant={menuCategory === c.id ? "default" : "outline"}
-          key={c.id}
-          onClick={() => handleChangeMenuCategory(c.id)}
+          onClick={() => handleChangeMenuCategory("")}
+          variant={menuCategory === "" ? "default" : "outline"}
         >
-          {c.name}
+          All
         </Button>
-      ))}
+        {categories?.map((c) => (
+          <Button
+            variant={menuCategory === c.id ? "default" : "outline"}
+            key={c.id}
+            onClick={() => handleChangeMenuCategory(c.id)}
+          >
+            {c.name}
+          </Button>
+        ))}
+      </div>
+      <Select onValueChange={(val: DishFilter) => handleChangeDishFilter(val)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder={dishFilter.toLocaleUpperCase()} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Filter by</SelectLabel>
+            <SelectItem value="popular">Popular</SelectItem>
+            <SelectItem value="cheapest">Price low to high</SelectItem>
+            <SelectItem value="expensive">Price high to low</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </motion.div>
   );
 }
@@ -134,7 +201,7 @@ function MenuItems({
               alt={f.name}
               className="object-cover w-full h-56"
               placeholder="blur"
-              blurDataURL="/images/blur-logo.png"
+              blurDataURL="/images/blur_logo.png"
             />
           </div>
           {/* CONTENT */}
