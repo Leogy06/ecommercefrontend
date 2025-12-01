@@ -41,7 +41,7 @@ export default function Landing() {
   const { push } = useRouterTransition();
 
   const { data: featuredDishes, isLoading: isFeaturedDishLoading } =
-    useGetMenuItemsQuery();
+    useGetMenuItemsQuery("691ec0e2085fc25e6ade9168");
 
   return (
     <main className="h-screen overflow-y-auto">
@@ -238,6 +238,8 @@ function FeaturedDishes({
                   width={500}
                   alt={f.name}
                   className="object-cover w-full h-56"
+                  placeholder="blur"
+                  blurDataURL="/images/blur-logo.png"
                 />
               </div>
 
@@ -271,7 +273,8 @@ function FeaturedDishes({
   );
 }
 
-function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
+//use in menu
+export function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const [selectedOptions, setSelectedOptions] = useState<Choices[]>([]);
@@ -301,7 +304,6 @@ function AddToCartButton({ menuItem }: { menuItem: MenuItem }) {
       selectedOptions,
       item: menuItem,
     };
-
 
     addItem(cartItem);
 

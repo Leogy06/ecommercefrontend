@@ -41,3 +41,8 @@ export interface CartItems {
   selectedOptions: Choices[] | undefined;
   item?: MenuItem;
 }
+
+export interface Categories {
+  id: string;
+  name: string;
+}

@@ -8,8 +8,8 @@ export const menuItemApiSlice = createApi({
   baseQuery,
   tagTypes: ["MenuItems"],
   endpoints: (builder) => ({
-    getMenuItems: builder.query<MenuItem[], void>({
-      query: () => "/api/menuitem", // translates to /api/users
+    getMenuItems: builder.query<MenuItem[], string>({
+      query: (categoryId) => `/api/menuitem?categoryId=${categoryId}`, // translates to /api/users
       providesTags: ["MenuItems"],
     }),
     // add other endpoints here
